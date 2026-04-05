@@ -15,7 +15,6 @@ const RobotMockup = ({ scrollProgress = 0, dragDelta = { x: 0, y: 0 }, onRobotCl
   const group        = useRef();
   const { scene, animations } = useGLTF('/3Dmodels/robot/scene.gltf');
   const { actions }  = useAnimations(animations, group);
-  const [isHovered, setIsHovered] = useState(false);
   const [message, setMessage] = useState("🤖 Welcome to EG_codera");
 
   // Smoothed internal state
@@ -53,9 +52,9 @@ const RobotMockup = ({ scrollProgress = 0, dragDelta = { x: 0, y: 0 }, onRobotCl
     smoothRotX.current = THREE.MathUtils.lerp(smoothRotX.current, targetX + dragX, 0.07);
 
     // ─── 2. Scroll-driven full spin (section transition) ────────────────────
-    // Over the entire scroll (0 to 1), do 2 full 360-degree spins (Math.PI * 4)
-    // This perfectly aligns it to face front at sections 1 (0%), 2 (50%), and 3 (100%).
-    const targetSpin = scrollProgress * Math.PI * 4;
+    // Completes exactly one 360-degree spin (Math.PI * 2) per section (every 0.25).
+    // Total 4 sections means 4 spins (Math.PI * 8).
+    const targetSpin = scrollProgress * Math.PI * 8;
     smoothSpinY.current = THREE.MathUtils.lerp(smoothSpinY.current, targetSpin, 0.05);
 
     group.current.rotation.y = smoothRotY.current + smoothSpinY.current;
@@ -63,14 +62,16 @@ const RobotMockup = ({ scrollProgress = 0, dragDelta = { x: 0, y: 0 }, onRobotCl
 
     // ─── 3. Scroll-driven zoom ───────────────────────────────────────────────
     let targetScale = 1;
-    if (scrollProgress <= 0.5) {
-      // Zoom in at Services section (0.5)
-      const zoomCurve = 1 - Math.abs(scrollProgress - 0.5) * 2;
-      targetScale = 1 + Math.max(0, zoomCurve) * 0.35; // peaks at 1.35
+    if (scrollProgress <= 0.25) {
+      // Hero (0) to Section 2 (0.25)
+      // Starts at 1.6 (big zoom) and shrinks to 0.7 exactly at Section 2
+      const factor = scrollProgress / 0.25; // 0 to 1
+      targetScale = 1.6 - (factor * 0.9); 
     } else {
-      // Shrink drastically for Company section (1.0) making it a clickable widget
-      const shrinkFactor = (scrollProgress - 0.5) * 2; // maps 0.5->1.0 to 0->1
-      targetScale = 1.35 - (shrinkFactor * 0.75); // shrinks from 1.35 down to 0.6
+      // Sections 2-4 (0.25 to 1.0)
+      // Stays small, slight shrink for fine detail from 0.7 down to 0.6
+      const factor = (scrollProgress - 0.25) / 0.75; // 0 to 1
+      targetScale = 0.7 - (factor * 0.1);
     }
     
     smoothScale.current = THREE.MathUtils.lerp(smoothScale.current, targetScale, 0.06);
@@ -82,8 +83,6 @@ const RobotMockup = ({ scrollProgress = 0, dragDelta = { x: 0, y: 0 }, onRobotCl
       <group
         ref={group}
         dispose={null}
-        onPointerEnter={(e) => { e.stopPropagation(); setIsHovered(true);  }}
-        onPointerLeave={(e) => { e.stopPropagation(); setIsHovered(false); }}
         onClick={(e)        => { e.stopPropagation(); onRobotClick && onRobotClick(); }}
       >
         <primitive object={scene} scale={2.5} position={[0, -1, 0]} />

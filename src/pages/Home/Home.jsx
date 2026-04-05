@@ -14,21 +14,12 @@ gsap.registerPlugin(ScrollTrigger);
 const Home = () => {
   const containerRef        = useRef(null);
   const canvasWrapperRef    = useRef(null);
-  const heroContentRef      = useRef(null);
   const [scrollProgress, setScrollProgress] = useState(0);
 
   useEffect(() => {
     const ctx = gsap.context(() => {
 
-      // 1. Hero entrance reveal
-      gsap.from(heroContentRef.current.children, {
-        y: 50,
-        opacity: 0,
-        duration: 1,
-        stagger: 0.12,
-        ease: 'power3.out',
-        delay: 0.2,
-      });
+
 
       // 2. Track scroll progress (0 → 1) to drive 3D spin + zoom
       ScrollTrigger.create({
@@ -50,22 +41,40 @@ const Home = () => {
           }
         });
 
-        // 1. Move to Services section (left)
-        tl.fromTo(canvasWrapperRef.current, 
-          { x: '22vw', y: '0vh' }, 
-          { x: '-22vw', y: '0vh', ease: 'none', duration: 1 }
-        );
+        // Total duration 1.0 maps to 0..1 scroll progress
+        // 1. Move to Services section (left) - completes at 0.25
+        tl.to(canvasWrapperRef.current, {
+          x: '-32vw', 
+          y: '0vh', 
+          ease: 'power2.inOut', 
+          duration: 0.25 
+        });
 
-        // 2. Move to Company section (bottom right)
+        // 2. Stay Left until nearly the end
+        tl.to(canvasWrapperRef.current, {
+          x: '-32vw',
+          y: '0vh',
+          duration: 0.5 // stays left from 0.25 to 0.75
+        });
+
+        // 3. Move to Company section (bottom right) - from 0.75 to 1.0
         tl.to(canvasWrapperRef.current, {
           x: '35vw',
-          y: '30vh',
-          ease: 'none',
-          duration: 1
+          y: '35vh',
+          ease: 'power2.inOut',
+          duration: 0.25
         });
       });
 
-      // 4. Original sun-services section entrance
+      // 4. Hero text "swapping" entrance
+      gsap.from('.hero-left > *', {
+        x: -100, opacity: 0, duration: 1.2, stagger: 0.15, ease: 'power4.out', delay: 0.5
+      });
+      gsap.from('.hero-right > *', {
+        x: 100, opacity: 0, duration: 1.2, stagger: 0.15, ease: 'power4.out', delay: 0.5
+      });
+
+      // 5. Original sun-services section entrance
       gsap.from('.services-title', {
         y: 30, opacity: 0, duration: 0.8, ease: 'power3.out',
         scrollTrigger: { trigger: '.services-section', start: 'top 70%' },
@@ -75,7 +84,7 @@ const Home = () => {
         scrollTrigger: { trigger: '.services-section', start: 'top 60%' },
       });
 
-      // 5. New services showcase entrance
+      // 6. New services showcase entrance
       gsap.from('.showcase-header > *', {
         y: 30, opacity: 0, duration: 0.8, stagger: 0.15, ease: 'power3.out',
         scrollTrigger: { trigger: '.home-showcase-section', start: 'top 70%' },
@@ -89,7 +98,7 @@ const Home = () => {
         scrollTrigger: { trigger: '.showcase-cta', start: 'top 90%' },
       });
 
-      // 6. Global Light Mode (Good Mode) transition
+      // 7. Global Light Mode (Good Mode) transition
       ScrollTrigger.create({
         trigger: '.services-section',
         start: 'top 40%',
@@ -115,28 +124,34 @@ const Home = () => {
 
       {/* ── HERO ── */}
       <section className="section hero-section">
-        <div className="hero-content" ref={heroContentRef}>
+        <div className="hero-left">
           <div className="glow-badge">
-            <span className="glow-dot"></span> Futuristic Digital Agency
+            <span className="glow-dot"></span> Futuristic Agency
           </div>
-          <h1 className="hero-title">
-            We Craft <span className="text-gradient">Digital Experiences</span> That Move
+          <h1 className="hero-title hero-title--left">
+            We Craft <span className="text-gradient">Digital</span>
           </h1>
-          <div className="hero-subtext-container">
-            <div className="vertical-line"></div>
-            <p className="hero-subtext">
-              Merging GSAP motion, cutting-edge 3D visuals, and AI-driven logic to build
-              web applications that leave a lasting impression.
-            </p>
-          </div>
           <div className="btn-group">
             <button className="btn-primary">
               <span className="btn-text">Start Project</span>
               <div className="btn-shine"></div>
             </button>
-            <button className="btn-secondary"><Play size={18} /> View Work</button>
           </div>
         </div>
+
+        <div className="hero-right">
+          <h1 className="hero-title hero-title--right">
+            <span className="text-gradient">Experiences</span> That Move
+          </h1>
+          <div className="hero-subtext-container">
+            <p className="hero-subtext">
+              Merging GSAP motion, 3D visuals, and AI to build
+              apps that leave a lasting impression.
+            </p>
+          </div>
+          <button className="btn-secondary"><Play size={18} /> View Work</button>
+        </div>
+
         <div className="hero-robot-bg">
           <CanvasClub />
         </div>
