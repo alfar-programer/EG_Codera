@@ -1,7 +1,7 @@
-import React, { useRef, useEffect, useState } from 'react';
-import { useFrame } from '@react-three/fiber';
-import { useGLTF, useAnimations, Float, Html } from '@react-three/drei';
-import * as THREE from 'three';
+import React, { useRef, useEffect, useState } from "react";
+import { useFrame } from "@react-three/fiber";
+import { useGLTF, useAnimations, Float, Html } from "@react-three/drei";
+import * as THREE from "three";
 
 /**
  * RobotMockup
@@ -11,15 +11,20 @@ import * as THREE from 'three';
  *   dragDelta      {object}  { x, y } pixel offset from drag
  *   onRobotClick   {fn}      called when user clicks the robot (not a drag)
  */
-const RobotMockup = ({ scrollProgress = 0, dragDelta = { x: 0, y: 0 }, onRobotClick, showChat = false }) => {
-  const group        = useRef();
-  const { scene, animations } = useGLTF('/3Dmodels/robot/scene.gltf');
-  const { actions }  = useAnimations(animations, group);
+const RobotMockup = ({
+  scrollProgress = 0,
+  dragDelta = { x: 0, y: 0 },
+  onRobotClick,
+  showChat = false,
+}) => {
+  const group = useRef();
+  const { scene, animations } = useGLTF("/3Dmodels/robot/scene.gltf");
+  const { actions } = useAnimations(animations, group);
   const [message, setMessage] = useState("🤖 Welcome to EG_codera");
 
   // Smoothed internal state
-  const smoothRotY  = useRef(0);
-  const smoothRotX  = useRef(0);
+  const smoothRotY = useRef(0);
+  const smoothRotX = useRef(0);
   const smoothSpinY = useRef(0);
   const smoothScale = useRef(1);
 
@@ -42,20 +47,32 @@ const RobotMockup = ({ scrollProgress = 0, dragDelta = { x: 0, y: 0 }, onRobotCl
     if (!group.current) return;
 
     // ─── 1. Mouse-look (robot tracks the cursor) ────────────────────────────
-    const targetY = state.mouse.x * (Math.PI / 4);   // ±45°
-    const targetX = -state.mouse.y * (Math.PI / 6);  // ±30°
+    const targetY = state.mouse.x * (Math.PI / 4); // ±45°
+    const targetX = -state.mouse.y * (Math.PI / 6); // ±30°
 
     const dragY = dragDelta.x * 0.006;
     const dragX = dragDelta.y * 0.006;
 
-    smoothRotY.current = THREE.MathUtils.lerp(smoothRotY.current, targetY + dragY, 0.07);
-    smoothRotX.current = THREE.MathUtils.lerp(smoothRotX.current, targetX + dragX, 0.07);
+    smoothRotY.current = THREE.MathUtils.lerp(
+      smoothRotY.current,
+      targetY + dragY,
+      0.07,
+    );
+    smoothRotX.current = THREE.MathUtils.lerp(
+      smoothRotX.current,
+      targetX + dragX,
+      0.07,
+    );
 
     // ─── 2. Scroll-driven full spin (section transition) ────────────────────
     // Completes exactly one 360-degree spin (Math.PI * 2) per section (every 0.25).
     // Total 4 sections means 4 spins (Math.PI * 8).
     const targetSpin = scrollProgress * Math.PI * 8;
-    smoothSpinY.current = THREE.MathUtils.lerp(smoothSpinY.current, targetSpin, 0.05);
+    smoothSpinY.current = THREE.MathUtils.lerp(
+      smoothSpinY.current,
+      targetSpin,
+      0.05,
+    );
 
     group.current.rotation.y = smoothRotY.current + smoothSpinY.current;
     group.current.rotation.x = smoothRotX.current;
@@ -66,15 +83,19 @@ const RobotMockup = ({ scrollProgress = 0, dragDelta = { x: 0, y: 0 }, onRobotCl
       // Hero (0) to Section 2 (0.25)
       // Starts at 1.6 (big zoom) and shrinks to 0.7 exactly at Section 2
       const factor = scrollProgress / 0.25; // 0 to 1
-      targetScale = 1.6 - (factor * 0.9); 
+      targetScale = 1.6 - factor * 0.9;
     } else {
       // Sections 2-4 (0.25 to 1.0)
       // Stays small, slight shrink for fine detail from 0.7 down to 0.6
       const factor = (scrollProgress - 0.25) / 0.75; // 0 to 1
-      targetScale = 0.7 - (factor * 0.1);
+      targetScale = 0.7 - factor * 0.1;
     }
-    
-    smoothScale.current = THREE.MathUtils.lerp(smoothScale.current, targetScale, 0.06);
+
+    smoothScale.current = THREE.MathUtils.lerp(
+      smoothScale.current,
+      targetScale,
+      0.06,
+    );
     group.current.scale.setScalar(smoothScale.current);
   });
 
@@ -83,78 +104,89 @@ const RobotMockup = ({ scrollProgress = 0, dragDelta = { x: 0, y: 0 }, onRobotCl
       <group
         ref={group}
         dispose={null}
-        onClick={(e)        => { e.stopPropagation(); onRobotClick && onRobotClick(); }}
+        onClick={(e) => {
+          e.stopPropagation();
+          onRobotClick && onRobotClick();
+        }}
       >
         <primitive object={scene} scale={2.5} position={[0, -1, 0]} />
-        <pointLight position={[0, 0, 2]}   intensity={2}   color="#00f0ff" />
-        <pointLight position={[-2, 2, -2]} intensity={1.5} color="#8a2be2" />
+        <pointLight position={[0, 0, 2]} intensity={2} color="#D9FF00" />
+        <pointLight position={[-2, 2, -2]} intensity={1.5} color="#ffffff" />
 
         {/* ── Speech bubble — positioned at the robot's face/mouth level ── */}
         {!showChat && (
           <Html
             position={[0.8, 1.8, 0.4]}
             center
-          distanceFactor={5}
-          zIndexRange={[100, 0]}
-        >
-          <div style={{
-            position: 'relative',
-            background: 'linear-gradient(135deg, rgba(0, 10, 25, 0.92) 0%, rgba(0, 30, 50, 0.88) 100%)',
-            backdropFilter: 'blur(20px)',
-            WebkitBackdropFilter: 'blur(20px)',
-            border: '2px solid rgba(0, 240, 255, 0.6)',
-            borderRadius: '24px',
-            padding: '20px 32px',
-            color: '#e0faff',
-            fontSize: '18px',
-            fontWeight: '800',
-            whiteSpace: 'nowrap',
-            fontFamily: "'Inter', sans-serif",
-            pointerEvents: 'none',
-            userSelect: 'none',
-            boxShadow: `
-              0 0 40px rgba(0, 240, 255, 0.45),
-              0 0 80px rgba(0, 240, 255, 0.2),
-              inset 0 0 15px rgba(0,240,255,0.1)
+            distanceFactor={5}
+            zIndexRange={[100, 0]}
+          >
+            <div
+              style={{
+                position: "relative",
+                background:
+                  "linear-gradient(135deg, rgba(0, 10, 25, 0.92) 0%, rgba(0, 30, 50, 0.88) 100%)",
+                backdropFilter: "blur(20px)",
+                WebkitBackdropFilter: "blur(20px)",
+                border: "2px solid rgba(217, 255, 0, 0.6)",
+                borderRadius: "24px",
+                padding: "20px 32px",
+                color: "#e0faff",
+                fontSize: "18px",
+                fontWeight: "800",
+                whiteSpace: "nowrap",
+                fontFamily: "'Inter', sans-serif",
+                pointerEvents: "none",
+                userSelect: "none",
+                boxShadow: `
+              0 0 40px rgba(217, 255, 0, 0.45),
+              0 0 80px rgba(217, 255, 0, 0.2),
+              inset 0 0 15px rgba(217, 255, 0, 0.1)
             `,
-            animation: 'robotSpeechIn 0.35s cubic-bezier(0.34, 1.56, 0.64, 1)',
-            letterSpacing: '0.05em',
-            textShadow: '0 0 12px rgba(0,240,255,0.8)',
-          }}>
-            {/* The dynamic message */}
-            <span>{message}</span>
+                animation:
+                  "robotSpeechIn 0.35s cubic-bezier(0.34, 1.56, 0.64, 1)",
+                letterSpacing: "0.05em",
+                textShadow: "0 0 12px rgba(217, 255, 0, 0.8)",
+              }}
+            >
+              {/* The dynamic message */}
+              <span>{message}</span>
 
-            {/* Speech-bubble tail pointing down-left toward robot mouth */}
-            <span style={{
-              position: 'absolute',
-              bottom: '-14px',
-              left: '22px',
-              width: 0,
-              height: 0,
-              borderLeft: '7px solid transparent',
-              borderRight: '12px solid transparent',
-              borderTop: '14px solid rgba(0, 240, 255, 0.55)',
-              filter: 'drop-shadow(0 2px 6px rgba(0,240,255,0.4))',
-            }} />
-            {/* Tail inner fill */}
-            <span style={{
-              position: 'absolute',
-              bottom: '-12px',
-              left: '23px',
-              width: 0,
-              height: 0,
-              borderLeft: '6px solid transparent',
-              borderRight: '11px solid transparent',
-              borderTop: '13px solid rgba(0, 10, 25, 0.92)',
-            }} />
-          </div>
-        </Html>
+              {/* Speech-bubble tail pointing down-left toward robot mouth */}
+              <span
+                style={{
+                  position: "absolute",
+                  bottom: "-14px",
+                  left: "22px",
+                  width: 0,
+                  height: 0,
+                  borderLeft: "7px solid transparent",
+                  borderRight: "12px solid transparent",
+                  borderTop: "14px solid rgba(217, 255, 0, 0.55)",
+                  filter: "drop-shadow(0 2px 6px rgba(217, 255, 0, 0.4))",
+                }}
+              />
+              {/* Tail inner fill */}
+              <span
+                style={{
+                  position: "absolute",
+                  bottom: "-12px",
+                  left: "23px",
+                  width: 0,
+                  height: 0,
+                  borderLeft: "6px solid transparent",
+                  borderRight: "11px solid transparent",
+                  borderTop: "13px solid rgba(0, 10, 25, 0.92)",
+                }}
+              />
+            </div>
+          </Html>
         )}
       </group>
     </Float>
   );
 };
 
-useGLTF.preload('/3Dmodels/robot/scene.gltf');
+useGLTF.preload("/3Dmodels/robot/scene.gltf");
 
 export default RobotMockup;

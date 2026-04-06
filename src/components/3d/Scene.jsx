@@ -82,8 +82,8 @@ const Scene = ({ scrollProgress = 0 }) => {
           <Suspense fallback={null}>
             <Environment preset="city" />
             <ambientLight intensity={0.5} />
-            <directionalLight position={[10, 10, 5]}    intensity={1.5} color="#00f0ff" />
-            <directionalLight position={[-10, -10, -5]} intensity={1.5} color="#8a2be2" />
+            <directionalLight position={[10, 10, 5]}    intensity={1.5} color="#D9FF00" />
+            <directionalLight position={[-10, -10, -5]} intensity={1.5} color="#ffffff" />
 
             <RobotMockup
               scrollProgress={scrollProgress}
@@ -98,7 +98,7 @@ const Scene = ({ scrollProgress = 0 }) => {
               scale={10}
               blur={2.5}
               far={4}
-              color="#00f0ff"
+              color="#D9FF00"
             />
           </Suspense>
         </Canvas>
