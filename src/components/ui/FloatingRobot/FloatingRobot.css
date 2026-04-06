@@ -42,7 +42,8 @@
   box-shadow:
     0 0 28px rgba(217, 255, 0, 0.18),
     0 8px 32px rgba(0, 0, 0, 0.5);
-  overflow: hidden;
+  /* overflow: hidden removed — was clipping chat messages */
+  overflow: visible;
 }
 
 .floating-robot-wrap.widget:hover {
@@ -50,7 +51,14 @@
   box-shadow:
     0 0 44px rgba(217, 255, 0, 0.38),
     0 12px 40px rgba(0, 0, 0, 0.55);
-  transform: scale(1.08);
+  transform: scale(1.1);
+}
+
+.floating-robot-wrap.widget:active {
+  transform: scale(0.95);
+  box-shadow:
+    0 0 20px rgba(217, 255, 0, 0.5),
+    0 4px 16px rgba(0, 0, 0, 0.5);
 }
 
 /* ── Tooltip ── */
@@ -92,6 +100,6 @@
     backdrop-filter: blur(16px);
     border: 2px solid rgba(217, 255, 0, 0.45);
     box-shadow: 0 0 28px rgba(217, 255, 0, 0.18), 0 8px 32px rgba(0, 0, 0, 0.5);
-    overflow: hidden;
+    overflow: visible; /* allow chat to show outside bounds */
   }
 }

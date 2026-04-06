@@ -27,10 +27,14 @@ const FloatingRobot = () => {
   useEffect(() => {
     setShowChat(false); // close chat on page change
 
+    // Listen for Hero robot click event
+    const openChat = () => setShowChat(true);
+    window.addEventListener('open-tobe-chat', openChat);
+
     if (!isHome) {
       setMode('widget');
       setScrollProgress(0);
-      return;
+      return () => window.removeEventListener('open-tobe-chat', openChat);
     }
 
     const handleScroll = () => {
@@ -62,13 +66,14 @@ const FloatingRobot = () => {
     return () => {
       window.removeEventListener('scroll',  handleScroll);
       window.removeEventListener('resize',  handleScroll);
+      window.removeEventListener('open-tobe-chat', openChat);
     };
   }, [isHome, location.pathname]);
 
   /* ── Chat toggle ── */
   const handleRobotClick = useCallback(() => {
     if (isActualDrag.current) return;
-    setShowChat(true);
+    setShowChat(prev => !prev); // toggle on click
   }, []);
 
   /* ── Drag (only in hero mode) ── */
@@ -112,6 +117,7 @@ const FloatingRobot = () => {
         onPointerMove={!isWidget ? onPointerMove : undefined}
         onPointerUp={!isWidget ? onPointerUp : undefined}
         onPointerLeave={!isWidget ? onPointerUp : undefined}
+        title={isWidget ? 'Chat with Tobe 🤖' : undefined}
       >
         <Canvas
           style={{ width: '100%', height: '100%' }}
@@ -129,7 +135,7 @@ const FloatingRobot = () => {
               scrollProgress={isWidget ? 0 : scrollProgress}
               dragDelta={dragDelta}
               onRobotClick={handleRobotClick}
-              showChat={showChat || isWidget} // hide speech bubble in widget mode
+              showChat={showChat || isWidget}
             />
 
             {!isWidget && (
@@ -145,13 +151,13 @@ const FloatingRobot = () => {
           </Suspense>
         </Canvas>
 
-        {/* Tooltip shown only in widget mode */}
+        {/* Tooltip shown only in widget mode when chat is closed */}
         {isWidget && !showChat && (
           <div className="robot-widget-tooltip">Chat with Tobe 🤖</div>
         )}
       </div>
 
-      {/* ChatBox portal */}
+      {/* ChatBox portal — rendered at body level so nothing clips it */}
       {showChat && createPortal(
         <ChatBox onClose={() => setShowChat(false)} />,
         document.body

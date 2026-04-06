@@ -1,0 +1,73 @@
+/* ─── CTA ─── */
+.cta-section { padding-block: 8rem; padding-inline: 1.5rem; }
+.cta-box {
+  max-width: 1280px;
+  margin-inline: auto;
+  background: var(--card);
+  border: 1px solid rgba(255,255,255,.05);
+  border-radius: 3.75rem;
+  padding: 5rem;
+  text-align: center;
+  position: relative;
+  overflow: hidden;
+}
+.cta-gradient {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(to bottom, rgba(217,255,0,.05), transparent);
+  pointer-events: none;
+}
+.cta-h2 {
+  font-family: var(--font-display);
+  font-size: clamp(2.5rem, 6vw, 4.5rem);
+  font-weight: 700;
+  max-width: 48rem;
+  margin-inline: auto;
+  line-height: 1.1;
+  margin-block-end: 1.5rem;
+  position: relative;
+  color: var(--white);
+}
+.cta-sub {
+  color: var(--gray-400);
+  font-size: 1.25rem;
+  max-width: 36rem;
+  margin-inline: auto;
+  margin-block-end: 3rem;
+  position: relative;
+}
+.cta-form {
+  max-width: 28rem;
+  margin-inline: auto;
+  display: flex;
+  align-items: center;
+  padding: .5rem;
+  background: var(--black);
+  border-radius: 9999px;
+  border: 1px solid rgba(255,255,255,0.1);
+  transition: border-color .3s;
+  position: relative;
+}
+.cta-form:focus-within { border-color: var(--accent); }
+.cta-form input {
+  flex: 1;
+  background: transparent;
+  padding: .75rem 1.5rem;
+  outline: none;
+  color: var(--white);
+  font-size: 1rem;
+  border: none;
+}
+.cta-form input::placeholder { color: #4b5563; }
+.btn-notify {
+  background: var(--accent);
+  color: var(--black);
+  padding: .75rem 2rem;
+  border-radius: 9999px;
+  font-weight: 700;
+  border: none;
+  cursor: pointer;
+  transition: background .3s;
+  white-space: nowrap;
+}
+.btn-notify:hover { background: var(--white); }

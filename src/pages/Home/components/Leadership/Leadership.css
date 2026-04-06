@@ -1,0 +1,391 @@
+/**
+ * @license
+ * SPDX-License-Identifier: Apache-2.0
+ */
+
+/* ===== CSS Variables & Design Tokens ===== */
+:root {
+  --leadership-bg: #000000;
+  --leadership-text: #ffffff;
+  --leadership-text-muted: rgba(255, 255, 255, 0.5);
+  --leadership-text-dim: rgba(255, 255, 255, 0.4);
+  --leadership-accent: #E5FF00;
+  --leadership-accent-glow: rgba(229, 255, 0, 0.4);
+  --leadership-border: rgba(255, 255, 255, 0.1);
+  --leadership-transition-fast: 150ms ease;
+  --leadership-transition-normal: 300ms ease;
+  --leadership-transition-slow: 1000ms ease-out;
+  --leadership-shadow-lg: 0 10px 30px rgba(0, 0, 0, 0.3);
+  --leadership-shadow-glow: 0 10px 30px var(--leadership-accent-glow);
+  --leadership-blur-xl: 120px;
+  --leadership-max-width: 1280px;
+  --leadership-spacing-sm: 1rem;
+  --leadership-spacing-md: 1.5rem;
+  --leadership-spacing-lg: 2rem;
+  --leadership-spacing-xl: 3rem;
+  --leadership-spacing-2xl: 4rem;
+  --leadership-spacing-3xl: 6rem;
+}
+
+/* ===== Base Section Styles ===== */
+.leadership-section {
+  position: relative;
+  padding-block: 10rem;
+  padding-inline: 1.5rem;
+  background-color: var(--leadership-bg);
+  color: var(--leadership-text);
+  font-family: system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+  overflow: hidden;
+}
+
+.leadership-section::selection {
+  background-color: var(--leadership-accent);
+  color: var(--leadership-bg);
+}
+
+.leadership-container {
+  max-width: var(--leadership-max-width);
+  margin: 0 auto;
+  display: grid;
+  gap: var(--leadership-spacing-2xl);
+}
+
+@media (min-width: 1024px) {
+  .leadership-container {
+    grid-template-columns: 1.2fr 2fr;
+    gap: var(--leadership-spacing-3xl);
+  }
+}
+
+/* ===== Sidebar (Left Column) ===== */
+.leadership-sidebar {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: var(--leadership-spacing-lg);
+}
+
+@media (min-width: 1024px) {
+  .leadership-sidebar {
+    position: sticky;
+    top: 6rem;
+    align-self: flex-start;
+    height: fit-content;
+  }
+}
+
+.leadership-header {
+  display: flex;
+  flex-direction: column;
+  gap: var(--leadership-spacing-md);
+}
+
+.leadership-label {
+  display: flex;
+  align-items: center;
+  gap: var(--leadership-spacing-sm);
+  color: var(--leadership-accent);
+  font-size: 0.875rem;
+  font-weight: 700;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+}
+
+.leadership-label-dot {
+  width: 0.375rem;
+  height: 0.375rem;
+  border-radius: 50%;
+  background-color: var(--leadership-accent);
+}
+
+.leadership-title {
+  font-size: clamp(3rem, 6vw, 4.5rem);
+  font-weight: 700;
+  line-height: 1.1;
+  letter-spacing: -0.02em;
+  margin: 0;
+}
+
+.leadership-title-accent {
+  display: flex;
+  align-items: center;
+  gap: var(--leadership-spacing-md);
+}
+
+.leadership-title-line {
+  display: inline-block;
+  width: 4rem;
+  height: 0.25rem;
+  background-color: var(--leadership-text);
+  vertical-align: middle;
+}
+
+/* ===== Spiral Animation ===== */
+.leadership-spiral-wrapper {
+  padding-top: var(--leadership-spacing-2xl);
+  display: none;
+}
+
+@media (min-width: 1024px) {
+  .leadership-spiral-wrapper {
+    display: block;
+  }
+}
+
+.leadership-spiral {
+  position: relative;
+  width: 10rem;
+  height: 10rem;
+}
+
+.leadership-spiral-image {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  opacity: 0.9;
+  filter: brightness(1.1) contrast(1.1);
+}
+
+/* ===== Members List (Right Column) ===== */
+.leadership-members {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+}
+
+.leadership-member {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: var(--leadership-spacing-lg);
+  align-items: center;
+  padding-block-end: var(--leadership-spacing-2xl);
+  margin-block-end: var(--leadership-spacing-2xl);
+  border-bottom: 1px solid var(--leadership-border);
+}
+
+.leadership-member:last-child {
+  padding-block-end: 0;
+  margin-block-end: 0;
+  border-bottom: none;
+}
+
+@media (min-width: 768px) {
+  .leadership-member {
+    grid-template-columns: 1fr auto;
+    gap: var(--leadership-spacing-3xl);
+  }
+}
+
+.leadership-member-content {
+  display: flex;
+  flex-direction: column;
+  gap: var(--leadership-spacing-lg);
+}
+
+.leadership-member-info {
+  display: flex;
+  flex-direction: column;
+  gap: var(--leadership-spacing-sm);
+}
+
+.leadership-member-name {
+  font-size: clamp(2rem, 4vw, 2.25rem);
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  margin: 0;
+  line-height: 1.1;
+  color: var(--leadership-text);
+  transition: color var(--leadership-transition-normal);
+}
+
+.leadership-member:hover .leadership-member-name {
+  color: var(--leadership-accent);
+}
+
+.leadership-member-role {
+  color: var(--leadership-text-dim);
+  font-size: 1.125rem;
+  font-weight: 500;
+  margin: 0;
+}
+
+.leadership-member-description {
+  color: var(--leadership-text-muted);
+  font-size: 1.125rem;
+  font-weight: 300;
+  line-height: 1.7;
+  max-width: 36rem;
+  margin: 0;
+}
+
+/* ===== Flower Mask Component ===== */
+.leadership-flower-wrapper {
+  position: relative;
+  width: 14rem;
+  height: 14rem;
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+@media (min-width: 768px) {
+  .leadership-flower-wrapper {
+    width: 16rem;
+    height: 16rem;
+  }
+}
+
+.leadership-flower-shape {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  fill: var(--flower-color, #4A5D3F);
+  color: var(--flower-color, #4A5D3F);
+}
+
+.leadership-flower-petal {
+  transition: filter var(--leadership-transition-normal);
+}
+
+.leadership-flower-wrapper:hover .leadership-flower-petal {
+  filter: brightness(1.1);
+}
+
+.leadership-flower-image-container {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.leadership-flower-image-wrapper {
+  width: 55%;
+  height: 55%;
+  border-radius: 50%;
+  overflow: hidden;
+  border: 4px solid rgba(0, 0, 0, 0.1);
+  box-shadow: var(--leadership-shadow-lg);
+}
+
+.leadership-flower-image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transform: scale(1.1);
+  transition: transform var(--leadership-transition-slow);
+  will-change: transform;
+}
+
+.leadership-flower-wrapper:hover .leadership-flower-image {
+  transform: scale(1.25);
+}
+
+/* ===== Badge Component ===== */
+.leadership-badge {
+  position: absolute;
+  bottom: 20%;
+  left: 10%;
+  width: 4rem;
+  height: 4rem;
+  background-color: var(--leadership-accent);
+  border-radius: 50%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  box-shadow: var(--leadership-shadow-glow);
+  cursor: pointer;
+  border: none;
+  padding: 0;
+  z-index: 10;
+  transition: transform var(--leadership-transition-fast);
+}
+
+.leadership-badge:hover {
+  transform: scale(1.05);
+}
+
+.leadership-badge-icon {
+  width: 1.25rem;
+  height: 1.25rem;
+  color: var(--leadership-bg);
+}
+
+.leadership-badge-text {
+  font-size: 0.5rem;
+  font-weight: 900;
+  color: var(--leadership-bg);
+  text-transform: uppercase;
+  letter-spacing: -0.02em;
+  line-height: 1;
+  margin-top: 0.125rem;
+}
+
+/* ===== Background Effects ===== */
+.leadership-background-effects {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  z-index: -1;
+  overflow: hidden;
+}
+
+.leadership-bg-glow {
+  position: absolute;
+  border-radius: 50%;
+  filter: blur(var(--leadership-blur-xl));
+  opacity: 0.05;
+}
+
+.leadership-bg-glow--top {
+  top: -10%;
+  right: -10%;
+  width: 40%;
+  height: 40%;
+  background-color: var(--leadership-accent);
+}
+
+.leadership-bg-glow--bottom {
+  bottom: -10%;
+  left: -10%;
+  width: 40%;
+  height: 40%;
+  background-color: var(--leadership-text);
+}
+
+/* ===== Accessibility & Focus States ===== */
+.leadership-badge:focus-visible {
+  outline: 3px solid var(--leadership-accent);
+  outline-offset: 4px;
+}
+
+.leadership-flower-image:focus-visible {
+  outline: 3px solid var(--leadership-accent);
+  outline-offset: 4px;
+}
+
+/* ===== Reduced Motion Preference ===== */
+@media (prefers-reduced-motion: reduce) {
+  .leadership-flower-image,
+  .leadership-spiral,
+  .leadership-badge {
+    transition: none !important;
+    animation: none !important;
+  }
+}
+
+/* ===== Print Styles ===== */
+@media print {
+  .leadership-background-effects,
+  .leadership-spiral-wrapper {
+    display: none;
+  }
+  
+  .leadership-flower-wrapper {
+    width: 12rem;
+    height: 12rem;
+  }
+}
