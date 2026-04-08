@@ -253,35 +253,6 @@
   filter: brightness(1.1);
 }
 
-.leadership-flower-image-container {
-  position: absolute;
-  inset: 0;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
-.leadership-flower-image-wrapper {
-  width: 55%;
-  height: 55%;
-  border-radius: 50%;
-  overflow: hidden;
-  border: 4px solid rgba(0, 0, 0, 0.1);
-  box-shadow: var(--leadership-shadow-lg);
-}
-
-.leadership-flower-image {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  transform: scale(1.1);
-  transition: transform var(--leadership-transition-slow);
-  will-change: transform;
-}
-
-.leadership-flower-wrapper:hover .leadership-flower-image {
-  transform: scale(1.25);
-}
 
 /* ===== Badge Component ===== */
 .leadership-badge {

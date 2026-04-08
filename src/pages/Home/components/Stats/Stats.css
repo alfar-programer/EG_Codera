@@ -10,6 +10,8 @@
   z-index: 0;
   will-change: transform, opacity;
 }
+
+/* ── Header ── */
 .stats-header {
   display: flex;
   flex-direction: column;
@@ -19,6 +21,7 @@
   margin-block-end: 5rem;
 }
 @media (min-width: 768px) { .stats-header { flex-direction: row; } }
+
 .stats-h2 {
   font-family: var(--font-display);
   font-size: clamp(2.5rem, 6vw, 4.5rem);
@@ -28,6 +31,7 @@
 }
 .stats-sub { text-align: right; display: flex; flex-direction: column; gap: 1.5rem; }
 .stats-sub p { color: var(--gray-400); max-width: 18rem; margin-inline-start: auto; }
+
 .btn-accent {
   display: inline-flex;
   align-items: center;
@@ -44,50 +48,83 @@
 }
 .btn-accent:hover { background: var(--white); }
 
+/* ── Stat Cards ── */
 .stats-cards { display: grid; gap: 1.5rem; }
-@media (min-width: 768px) { .stats-cards { grid-template-columns: repeat(3,1fr); } }
+@media (min-width: 768px) { .stats-cards { grid-template-columns: repeat(3, 1fr); } }
+
 .stat-card {
-  padding: 3rem;
-  border-radius: 2.5rem;
+  padding: 2.5rem 3rem;
+  border-radius: 2rem;
   transition: box-shadow .3s;
   will-change: transform;
   position: relative;
   z-index: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  min-height: 200px;
 }
 .stat-card:hover { box-shadow: 0 24px 64px rgba(0,0,0,.35); }
 .stat-card.yellow { background: var(--accent); color: var(--black); }
 .stat-card.white  { background: var(--white);  color: var(--black); }
-.stat-card.dark   { background: var(--card);   border: 1px solid rgba(255,255,255,.05); }
+.stat-card.dark   { background: #1a1a1a; border: 1px solid rgba(255,255,255,.07); color: var(--white); }
 .stat-card.dark p { color: var(--gray-400); }
-.stat-top { display: flex; align-items: flex-start; justify-content: space-between; }
+
+.stat-top {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.5rem;
+}
 .stat-num {
   font-family: var(--font-display);
-  font-size: 5rem;
+  font-size: clamp(4rem, 6vw, 6rem);
   font-weight: 700;
   letter-spacing: -.04em;
   line-height: 1;
 }
-.stat-unit { font-size: 1.25rem; font-weight: 500; margin-block-start: 1rem; }
-.stat-desc { margin-block-start: 2rem; font-size: 1.125rem; font-weight: 500; line-height: 1.4; opacity: .8; }
+.stat-unit { font-size: 1.5rem; font-weight: 600; margin-block-start: 0.75rem; opacity: 0.75; }
+.stat-desc { margin-block-start: 2rem; font-size: 1rem; font-weight: 500; line-height: 1.5; opacity: .8; }
 
-.tags-cloud { margin-block-start: 8rem; display: flex; flex-wrap: wrap; justify-content: center; gap: 1rem; }
-.tag-pill {
-  padding: 1rem 2rem;
-  border-radius: 9999px;
-  font-size: 1.125rem;
-  font-weight: 700;
-  box-shadow: 0 20px 60px rgba(0,0,0,.4);
-  cursor: default;
-  will-change: transform;
+/* ── Falling Text pill tags ── */
+.falling-tags-wrapper {
+  margin-block-start: 1rem;
   position: relative;
-  z-index: 1;
+  width: 100%;
+  height: 340px;
+  overflow: hidden;
 }
-.tag-white   { background: var(--white);      color: var(--black); }
-.tag-yellow  { background: var(--accent);     color: var(--black); }
-.tag-orange  { background: #f97316;            color: var(--white); }
-.tag-gray    { background: #1f2937;            color: var(--white); }
-.tag-indigo  { background: #6366f1;            color: var(--white); }
-.tag-rot-neg { transform: rotate(-6deg); }
-.tag-rot-pos { transform: rotate(3deg); }
-.tag-rot-n3  { transform: rotate(-3deg); }
-.tag-rot-p6  { transform: rotate(6deg); }
+
+/* Inner container fills the wrapper */
+.falling-tags-inner {
+  width: 100%;
+  height: 100%;
+}
+
+/* Base pill style — UNIFORM width so physics bodies are equal size */
+.falling-tags-inner .word {
+  width: 190px;               /* uniform width */
+  height: 52px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 9999px;
+  font-size: 0.95rem;
+  font-weight: 700;
+  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.45);
+  white-space: nowrap;
+  cursor: grab;
+  user-select: none;
+  backdrop-filter: blur(6px);
+  -webkit-backdrop-filter: blur(6px);
+  /* default colour (overridden below) */
+  background: rgba(255,255,255,0.82);
+  color: var(--black);
+}
+.falling-tags-inner .word:active { cursor: grabbing; }
+
+/* Per-pill colours matching the reference image — semi-transparent */
+.falling-tags-inner .tag-white  { background: rgba(255, 255, 255, 0.82); color: #111111; }
+.falling-tags-inner .tag-lime   { background: rgba(163, 230,  53, 0.85); color: #111111; }
+.falling-tags-inner .tag-orange { background: rgba(239,  68,  68, 0.85); color: #ffffff; }
+.falling-tags-inner .tag-gray   { background: rgba( 55,  65,  81, 0.80); color: #ffffff; backdrop-filter: blur(4px); }
+.falling-tags-inner .tag-indigo { background: rgba( 99, 102, 241, 0.85); color: #ffffff; }

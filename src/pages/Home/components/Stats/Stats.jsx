@@ -1,7 +1,19 @@
 import React, { useEffect, useRef, useState } from 'react';
-import { motion, useInView, animate } from 'motion/react';
+import { motion, useInView, animate } from 'motion/react'; // eslint-disable-line no-unused-vars
 import { ArrowUpRight } from 'lucide-react';
+import FallingText from '../../../../components/ui/FallingText/FallingText';
 import './Stats.css';
+
+/* ── Tag items — each has a label + CSS class for its pill colour ── */
+const TAGS = [
+  { label: 'Strategic Agency',  cls: 'tag-white'  },
+  { label: 'Results-driven',    cls: 'tag-lime'   },
+  { label: 'Influential',       cls: 'tag-orange' },
+  { label: 'Innovation Driven', cls: 'tag-white'  },
+  { label: 'Multidimensional',  cls: 'tag-gray'   },
+  { label: 'Strategic-minded',  cls: 'tag-lime'   },
+  { label: 'Result oriented',   cls: 'tag-indigo' },
+];
 
 /* ── Animated counter hook ── */
 function useCountUp(target, inView, duration = 1.8) {
@@ -10,7 +22,6 @@ function useCountUp(target, inView, duration = 1.8) {
   useEffect(() => {
     if (!inView) return;
 
-    // Detect if target is a number or has K/% suffix
     const raw = parseFloat(target.replace(/[^0-9.]/g, ''));
     const suffix = target.replace(/[0-9.]/g, '');
 
@@ -49,7 +60,7 @@ const StatCard = ({ color, num, unit, desc, index }) => {
     >
       <div className="stat-top">
         <span className="stat-num">{count}</span>
-        <span className="stat-unit">{unit}</span>
+        {unit && <span className="stat-unit">{unit}</span>}
       </div>
       <p className="stat-desc">{desc}</p>
     </motion.div>
@@ -71,29 +82,12 @@ const Orb = ({ style, color, duration = 14 }) => (
   />
 );
 
-/* ── Tag pill ── */
-const TagPill = ({ children, className, index }) => {
-  const ref = useRef(null);
-  const inView = useInView(ref, { once: true, margin: '-60px' });
-
-  return (
-    <motion.div
-      ref={ref}
-      className={`tag-pill ${className}`}
-      initial={{ opacity: 0, y: 40, rotate: 0 }}
-      animate={inView ? { opacity: 1, y: 0 } : {}}
-      transition={{ duration: 0.55, delay: 0.05 * index, ease: [0.22, 1, 0.36, 1] }}
-      whileHover={{ scale: 1.12, rotate: 0, transition: { duration: 0.2 } }}
-    >
-      {children}
-    </motion.div>
-  );
-};
-
 /* ── Section ── */
 const Stats = () => {
   const headerRef = useRef(null);
   const headerInView = useInView(headerRef, { once: true, margin: '-100px' });
+  const fallingRef = useRef(null);
+  const fallingInView = useInView(fallingRef, { once: true, margin: '-60px' });
 
   return (
     <section className="stats" style={{ position: 'relative', overflow: 'hidden' }}>
@@ -130,23 +124,25 @@ const Stats = () => {
         {/* Stat cards */}
         <div className="stats-cards">
           <StatCard index={0} color="yellow" num="500k" unit="Users" desc="Flexible, custom-fit plans designed to meet the unique needs and budget of your team." />
-          <StatCard index={1} color="white"  num="98%"  unit=""      desc="Our commitment to quality shines through near 98.05% client satisfaction." />
-          <StatCard index={2} color="dark"   num="23K"  unit=""      desc="Organic growth brings in twenty-three thousand signups and counting." />
+          <StatCard index={1} color="white"  num="98"   unit="%"     desc="Our commitment to quality shines through near 98.05% client satisfaction." />
+          <StatCard index={2} color="dark"   num="23"   unit="K"     desc="Organic growth brings in twenty-three thousand signups and counting." />
         </div>
 
-        {/* Tags cloud */}
-        <div className="tags-cloud">
-          {[
-            { label: 'Strategic Agency',   cls: 'tag-white' },
-            { label: 'Results-driven',     cls: 'tag-yellow tag-rot-neg' },
-            { label: 'Influential',        cls: 'tag-orange tag-rot-pos' },
-            { label: 'Innovation Driven',  cls: 'tag-white' },
-            { label: 'Multidimensional',   cls: 'tag-gray tag-rot-n3' },
-            { label: 'Strategic-minded',   cls: 'tag-yellow tag-rot-p6' },
-            { label: 'Result oriented',    cls: 'tag-indigo' },
-          ].map(({ label, cls }, i) => (
-            <TagPill key={label} className={cls} index={i}>{label}</TagPill>
-          ))}
+        {/* Falling Text tags cloud — static for 3 s, then physics */}
+        <div ref={fallingRef} className="falling-tags-wrapper">
+          {fallingInView && (
+            <FallingText
+              items={TAGS}
+              trigger="auto"
+              delay={3000}
+              backgroundColor="transparent"
+              wireframes={false}
+              gravity={1.2}
+              mouseConstraintStiffness={0.2}
+              fontSize="1rem"
+              className="falling-tags-inner"
+            />
+          )}
         </div>
       </div>
     </section>

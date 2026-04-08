@@ -3,46 +3,80 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import React from 'react';
-import { motion } from 'motion/react';
-import { ArrowUpRight } from 'lucide-react';
-import './Leadership.css';
+import React from "react";
+import { motion } from "motion/react";
+import { ArrowUpRight } from "lucide-react";
+import ceoImg from "/src/assets/images/leadership/CEOimg.png";
+import "./Leadership.css";
 
 const LEADERSHIP_MEMBERS = [
   {
     id: 1,
     name: "Alex Showrab",
     role: "Project Manager",
-    description: "Alex is a creator with a cause: making finance simple and accessible for all. A Brit with a European take on how to shake up the finance system.",
-    image: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&q=80&w=400&h=400",
-    flowerColor: "#4A5D3F"
+    description:
+      "Alex is a creator with a cause: making finance simple and accessible for all. A Brit with a European take on how to shake up the finance system.",
+    image: ceoImg,
+    flowerColor: "#4A5D3F",
   },
   {
     id: 2,
     name: "Alex Showrab",
     role: "Project Manager",
-    description: "Alex is a creator with a cause: making finance simple and accessible for all. A Brit with a European take on how to shake up the finance system.",
-    image: "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?auto=format&fit=crop&q=80&w=400&h=400",
+    description:
+      "Alex is a creator with a cause: making finance simple and accessible for all. A Brit with a European take on how to shake up the finance system.",
+    image: ceoImg,
     flowerColor: "#D4E157",
-    hasBadge: true
+    hasBadge: true,
   },
   {
     id: 3,
     name: "Alex Showrab",
     role: "Project Manager",
-    description: "Alex is a creator with a cause: making finance simple and accessible for all. A Brit with a European take on how to shake up the finance system.",
-    image: "https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?auto=format&fit=crop&q=80&w=400&h=400",
-    flowerColor: "#3D4A35"
-  }
+    description:
+      "Alex is a creator with a cause: making finance simple and accessible for all. A Brit with a European take on how to shake up the finance system.",
+    image: ceoImg,
+    flowerColor: "#3D4A35",
+  },
 ];
 
 const FlowerMask = ({ color, image, hasBadge }) => {
+  const maskId = `flower-mask-${color.replace("#", "")}`;
+  const petals = [0, 60, 120, 180, 240, 300];
+
   return (
-    <div className="leadership-flower-wrapper" style={{ '--flower-color': color }}>
-      {/* Flower Shape Background - 6 Elongated Petals */}
-      <svg viewBox="0 0 200 200" className="leadership-flower-shape">
-        <g transform="translate(100, 100)">
-          {[0, 60, 120, 180, 240, 300].map((angle) => (
+    <div
+      className="leadership-flower-wrapper"
+      style={{ "--flower-color": color }}
+    >
+      <svg
+        viewBox="0 0 200 200"
+        className="leadership-flower-shape"
+        xmlns="http://www.w3.org/2000/svg"
+      >
+        <defs>
+          {/* White areas = visible, black = hidden */}
+          <mask id={maskId}>
+            <g transform="translate(100, 100)" fill="white">
+              {petals.map((angle) => (
+                <rect
+                  key={angle}
+                  x="-28"
+                  y="-85"
+                  width="56"
+                  height="100"
+                  rx="28"
+                  transform={`rotate(${angle})`}
+                />
+              ))}
+              <circle cx="0" cy="0" r="45" />
+            </g>
+          </mask>
+        </defs>
+
+        {/* Colored flower background */}
+        <g transform="translate(100, 100)" fill={color}>
+          {petals.map((angle) => (
             <rect
               key={angle}
               x="-28"
@@ -56,23 +90,32 @@ const FlowerMask = ({ color, image, hasBadge }) => {
           ))}
           <circle cx="0" cy="0" r="45" className="leadership-flower-center" />
         </g>
-      </svg>
-      
-      {/* Profile Image masked into circle */}
-      <div className="leadership-flower-image-container">
-        <div className="leadership-flower-image-wrapper">
-          <img 
-            src={image} 
-            alt="Profile" 
-            className="leadership-flower-image"
-            referrerPolicy="no-referrer"
+
+        {/* Person photo clipped to flower shape via mask */}
+        <foreignObject
+          x="10"
+          y="15"
+          width="180"
+          height="185"
+          mask={`url(#${maskId})`}
+        >
+          <img
+            src={image}
+            alt="Profile"
+            style={{
+              width: "100%",
+              height: "100%",
+              objectFit: "contain",
+              objectPosition: "bottom center",
+              display: "block",
+            }}
           />
-        </div>
-      </div>
+        </foreignObject>
+      </svg>
 
       {/* Let's Talk Badge */}
       {hasBadge && (
-        <motion.button 
+        <motion.button
           initial={{ scale: 0, rotate: -20 }}
           animate={{ scale: 1, rotate: 0 }}
           whileHover={{ scale: 1.1, rotate: 5 }}
@@ -87,11 +130,11 @@ const FlowerMask = ({ color, image, hasBadge }) => {
   );
 };
 
+
 const Leadership = () => {
   return (
     <section className="leadership-section">
       <div className="leadership-container">
-        
         {/* Left Column: Sticky Heading */}
         <aside className="leadership-sidebar">
           <div className="leadership-header">
@@ -111,20 +154,20 @@ const Leadership = () => {
           {/* Abstract 3D Spiral Animation */}
           <div className="leadership-spiral-wrapper">
             <motion.div
-              animate={{ 
+              animate={{
                 y: [0, -20, 0],
                 rotate: [0, 15, 0],
-                scale: [1, 1.1, 1]
+                scale: [1, 1.1, 1],
               }}
-              transition={{ 
-                duration: 10, 
-                repeat: Infinity, 
-                ease: "easeInOut" 
+              transition={{
+                duration: 10,
+                repeat: Infinity,
+                ease: "easeInOut",
               }}
               className="leadership-spiral"
             >
-              <img 
-                src="/src/assets/images/logo.png" 
+              <img
+                src="/src/assets/images/logo.png"
                 alt="Glass Spiral"
                 className="leadership-spiral-image"
                 referrerPolicy="no-referrer"
@@ -136,7 +179,7 @@ const Leadership = () => {
         {/* Right Column: Members List */}
         <div className="leadership-members">
           {LEADERSHIP_MEMBERS.map((member, index) => (
-            <motion.article 
+            <motion.article
               key={member.id}
               initial={{ opacity: 0, y: 40 }}
               whileInView={{ opacity: 1, y: 0 }}
@@ -146,22 +189,18 @@ const Leadership = () => {
             >
               <div className="leadership-member-content">
                 <div className="leadership-member-info">
-                  <h2 className="leadership-member-name">
-                    {member.name}
-                  </h2>
-                  <p className="leadership-member-role">
-                    {member.role}
-                  </p>
+                  <h2 className="leadership-member-name">{member.name}</h2>
+                  <p className="leadership-member-role">{member.role}</p>
                 </div>
                 <p className="leadership-member-description">
                   {member.description}
                 </p>
               </div>
-              
-              <FlowerMask 
-                color={member.flowerColor} 
-                image={member.image} 
-                hasBadge={member.hasBadge} 
+
+              <FlowerMask
+                color={member.flowerColor}
+                image={member.image}
+                hasBadge={member.hasBadge}
               />
             </motion.article>
           ))}
