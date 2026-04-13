@@ -55,6 +55,10 @@ const ChatBox = ({ onClose }) => {
 
   useEffect(() => {
     inputRef.current?.focus();
+    // Dispatch the initial message so the 3D head bubble is in sync when chat opens
+    window.dispatchEvent(new CustomEvent('tobe-speaks', { 
+      detail: "Hey! 👋 I'm Tobe, your AI guide at EG Codera. What can I help you build today?" 
+    }));
   }, []);
 
   const sendMessage = (text) => {
@@ -67,10 +71,13 @@ const ChatBox = ({ onClose }) => {
 
     setTimeout(() => {
       setIsTyping(false);
+      const botReply = getReply(text);
       setMessages(prev => [
         ...prev,
-        { id: Date.now() + 1, sender: 'bot', text: getReply(text), time: new Date() },
+        { id: Date.now() + 1, sender: 'bot', text: botReply, time: new Date() },
       ]);
+      
+      window.dispatchEvent(new CustomEvent('tobe-speaks', { detail: botReply }));
     }, 1200 + Math.random() * 600);
   };
 
@@ -149,23 +156,25 @@ const ChatBox = ({ onClose }) => {
 
         {/* ── Input ── */}
         <form className="tobe-input-row" onSubmit={handleSubmit}>
-          <input
-            ref={inputRef}
-            type="text"
-            className="tobe-input"
-            placeholder="Ask me anything…"
-            value={input}
-            onChange={(e) => setInput(e.target.value)}
-            maxLength={300}
-          />
-          <button
-            type="submit"
-            className={`tobe-send ${input.trim() ? 'active' : ''}`}
-            disabled={!input.trim()}
-            aria-label="Send"
-          >
-            <Zap size={16} />
-          </button>
+          <div className="tobe-input-pill">
+            <input
+              ref={inputRef}
+              type="text"
+              className="tobe-input"
+              placeholder="Ask me anything…"
+              value={input}
+              onChange={(e) => setInput(e.target.value)}
+              maxLength={300}
+            />
+            <button
+              type="submit"
+              className={`tobe-send ${input.trim() ? 'active' : ''}`}
+              disabled={!input.trim()}
+              aria-label="Send"
+            >
+              <Zap size={16} />
+            </button>
+          </div>
         </form>
 
         {/* ── Footer ── */}

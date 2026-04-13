@@ -1,4 +1,4 @@
-import React, { Suspense } from "react";
+import React, { Suspense, useState, useEffect, useRef } from "react";
 import { motion } from "framer-motion";
 import { ArrowUpRight, Plus } from "lucide-react";
 import { Canvas } from "@react-three/fiber";
@@ -46,6 +46,45 @@ const cards = [
   },
 ];
 
+/* ── Speech bubble that tracks Tobe's messages ── */
+const RobotSpeechBubble = () => {
+  const [msg, setMsg] = useState("🤖 Welcome to EG Codera!");
+  const [visible, setVisible] = useState(true);
+  const timer = useRef(null);
+
+  useEffect(() => {
+    const handleSpeak = (e) => {
+      const clean = (e.detail || "").replace(/\*\*/g, "");
+      setVisible(false);
+      clearTimeout(timer.current);
+      timer.current = setTimeout(() => {
+        setMsg(clean);
+        setVisible(true);
+      }, 180);
+    };
+
+    // Fallback message after 4s
+    const fallback = setTimeout(() => {
+      setMsg("🤖 Click me to chat!");
+    }, 4000);
+
+    window.addEventListener("tobe-speaks", handleSpeak);
+    return () => {
+      window.removeEventListener("tobe-speaks", handleSpeak);
+      clearTimeout(timer.current);
+      clearTimeout(fallback);
+    };
+  }, []);
+
+  return (
+    <div className={`hero-robot-bubble${visible ? " hero-robot-bubble--visible" : ""}`}>
+      <span>{msg}</span>
+      {/* Downward tail toward robot */}
+      <span className="hero-robot-bubble__tail" />
+    </div>
+  );
+};
+
 const Hero = () => {
   return (
     <section className="hero-section selection:bg-brand-lime selection:text-brand-dark">
@@ -53,13 +92,14 @@ const Hero = () => {
       <div className="fixed inset-0 glow-bg pointer-events-none opacity-50" />
 
       <div className="main-container">
-        {/* Hero Section */}
-        <div className=" flex flex-col md:flex-row justify-between items-center mb-16 gap-12">
+        {/* ── Top row: headline left, robot right (BIG) ── */}
+        <div className="hero-top-row">
+          {/* Headline */}
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8, ease: "easeOut" }}
-            className="w-full max-w-4xl"
+            className="hero-headline-col"
           >
             <h1 className="text-6xl md:text-[96px] font-bold leading-[0.9] tracking-tighter">
               We Build <br />
@@ -72,34 +112,38 @@ const Hero = () => {
             </h1>
           </motion.div>
 
+          {/* ── BIG Robot – centred in its column ── */}
           <motion.div
-            initial={{ opacity: 0, scale: 0.8 }}
+            initial={{ opacity: 0, scale: 0.85 }}
             animate={{ opacity: 1, scale: 1 }}
-            transition={{ duration: 0.8, delay: 0.2 }}
-            className="hero-badge-col"
+            transition={{ duration: 0.9, delay: 0.15, ease: "easeOut" }}
+            className="hero-robot-col"
           >
-            {/* 3D Robot - click to open chat */}
+            {/* Speech bubble sits ABOVE the robot canvas */}
+            <RobotSpeechBubble />
+
+            {/* 3D Robot canvas */}
             <div
-              className="right-dev w-56 h-56 md:w-72 md:h-72"
-              style={{ position: 'relative', zIndex: 50, overflow: 'visible', cursor: 'pointer' }}
+              className="right-dev hero-robot-canvas"
               title="Chat with Tobe 🤖"
-              onClick={() => window.dispatchEvent(new CustomEvent('open-tobe-chat'))}
+              onClick={() => window.dispatchEvent(new CustomEvent("open-tobe-chat"))}
             >
               <Canvas
-                style={{ width: '100%', height: '100%' }}
-                dpr={[1, 2]}
-                gl={{ alpha: true, antialias: true }}
+                style={{ width: "100%", height: "100%" }}
+                dpr={[1, 1.5]}
+                gl={{ alpha: true, antialias: true, powerPreference: "high-performance" }}
               >
-                <PerspectiveCamera makeDefault position={[0, 0, 8]} fov={50} />
+                {/* Camera pulled back slightly to fit smaller column */}
+                <PerspectiveCamera makeDefault position={[0, 0.2, 7]} fov={48} />
                 <Suspense fallback={null}>
                   <Environment preset="city" />
-                  <ambientLight intensity={0.5} />
-                  <directionalLight position={[10, 10, 5]}    intensity={1.5} color="#D9FF00" />
-                  <directionalLight position={[-10, -10, -5]} intensity={1.5} color="#ffffff" />
+                  <ambientLight intensity={0.7} />
+                  <directionalLight position={[10, 10, 5]}    intensity={1.4} color="#D9FF00" />
+                  <directionalLight position={[-10, -10, -5]} intensity={1.0} color="#ffffff" />
                   <RobotMockup scrollProgress={0} dragDelta={{ x: 0, y: 0 }} showChat={false} />
                   <ContactShadows
-                    position={[0, -2.5, 0]}
-                    opacity={0.3}
+                    position={[0, -2.2, 0]}
+                    opacity={0.35}
                     scale={8}
                     blur={2}
                     far={4}
@@ -108,6 +152,8 @@ const Hero = () => {
                 </Suspense>
               </Canvas>
             </div>
+
+            <p className="hero-robot-label">Click Tobe to chat ✨</p>
           </motion.div>
         </div>
 
@@ -157,7 +203,7 @@ const Hero = () => {
                 className="w-full h-full object-cover grayscale group-hover:grayscale-0 group-hover:scale-110 transition-all duration-700 opacity-60 group-hover:opacity-100"
               />
               <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent opacity-60 group-hover:opacity-40 transition-opacity" />
-              
+
               <div className="absolute inset-0 p-8 flex flex-col justify-between">
                 <div className="flex justify-between items-start">
                   {card.subtitle && (
@@ -188,8 +234,6 @@ const Hero = () => {
             </motion.div>
           ))}
         </div>
-
-
       </div>
     </section>
   );

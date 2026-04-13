@@ -1,0 +1,557 @@
+/* ═══════════════════════════════════════════════
+   MODERN PROFESSIONAL ABOUT PAGE (GSAP ENHANCED)
+═══════════════════════════════════════════════ */
+
+.about-page {
+  background: var(--brand-dark, #000);
+  color: var(--white, #fff);
+  overflow-x: hidden;
+  font-family: var(--font-sans);
+}
+
+/* ─────────────────────────────────────────────
+   UTILITIES
+───────────────────────────────────────────── */
+.clip-text {
+  overflow: hidden;
+  display: block;
+}
+
+.clip-text span {
+  display: block;
+  transform: translateY(100%);
+}
+
+/* ─────────────────────────────────────────────
+   1. HERO SECTION
+───────────────────────────────────────────── */
+.about-hero {
+  position: relative;
+  min-height: 90vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding-top: 8rem;
+  padding-bottom: 4rem;
+  text-align: center;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+  overflow: hidden;
+}
+
+.about-hero::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background-image:
+    linear-gradient(rgba(255, 255, 255, 0.03) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255, 255, 255, 0.03) 1px, transparent 1px);
+  background-size: 60px 60px;
+  mask-image: radial-gradient(circle at 50% 50%, black 20%, transparent 80%);
+  -webkit-mask-image: radial-gradient(circle at 50% 50%, black 20%, transparent 80%);
+  pointer-events: none;
+  z-index: 0;
+}
+
+.about-hero::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(circle at 50% 20%, rgba(217, 255, 0, 0.08) 0%, transparent 60%);
+  pointer-events: none;
+  z-index: 0;
+  opacity: var(--hero-after-opacity, 1);
+}
+
+.about-hero-content {
+  position: relative;
+  z-index: 10;
+  max-width: 1000px;
+  padding: 0 1.5rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.about-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.5rem 1rem;
+  background: rgba(217, 255, 0, 0.05);
+  border: 1px solid rgba(217, 255, 0, 0.2);
+  border-radius: 9999px;
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: var(--brand-lime, #D9FF00);
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  margin-bottom: 2rem;
+  opacity: 0; /* JS will animate */
+}
+
+.about-badge-dot {
+  width: 6px;
+  height: 6px;
+  background: var(--brand-lime, #D9FF00);
+  border-radius: 50%;
+  box-shadow: 0 0 10px var(--brand-lime, #D9FF00);
+}
+
+.about-hero-title {
+  font-family: var(--font-display);
+  font-size: clamp(3rem, 7vw, 6rem);
+  font-weight: 800;
+  line-height: 1.05;
+  letter-spacing: -0.04em;
+  margin-bottom: 1.5rem;
+  color: var(--white);
+}
+
+.about-hero-title em {
+  font-style: italic;
+  font-family: var(--font-serif);
+  color: var(--brand-lime, #D9FF00);
+  font-weight: 400;
+  display: inline-block;
+}
+
+.about-hero-desc {
+  font-size: clamp(1.1rem, 2vw, 1.3rem);
+  color: var(--gray-400);
+  line-height: 1.7;
+  max-width: 700px;
+  margin-bottom: 3rem;
+  font-weight: 300;
+}
+
+/* ─────────────────────────────────────────────
+   2. MISSION / IDENTITY
+───────────────────────────────────────────── */
+.about-mission {
+  padding: 10rem 1.5rem;
+  background: var(--brand-dark);
+  position: relative;
+  overflow: hidden;
+}
+
+.about-container {
+  max-width: 1280px;
+  margin: 0 auto;
+}
+
+.mission-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 4rem;
+  align-items: center;
+}
+
+@media (min-width: 1024px) {
+  .mission-grid {
+    grid-template-columns: 1fr 1fr;
+    gap: 6rem;
+  }
+}
+
+.mission-heading {
+  font-family: var(--font-display);
+  font-size: clamp(2rem, 4vw, 3.5rem);
+  font-weight: 800;
+  line-height: 1.1;
+  margin-bottom: 2rem;
+  letter-spacing: -0.02em;
+}
+
+.mission-text-content p {
+  color: var(--gray-400);
+  font-size: 1.1rem;
+  line-height: 1.8;
+  margin-bottom: 1.5rem;
+  opacity: 0;
+  transform: translateY(20px);
+}
+
+.mission-text-content p strong {
+  color: var(--white);
+  font-weight: 600;
+}
+
+.mission-image-wrapper {
+  position: relative;
+  border-radius: 2rem;
+  overflow: hidden;
+  background: var(--card, #111);
+  border: 1px solid rgba(255, 255, 255, 0.05);
+  height: 600px;
+}
+
+.mission-image-inner {
+  width: 100%;
+  height: 120%; /* Extra height for parallax */
+  transform: translateY(-10%); /* Start offset */
+}
+
+.mission-image-inner img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  opacity: 0.8;
+  transition: opacity 0.5s ease;
+}
+
+.mission-image-wrapper:hover .mission-image-inner img {
+  opacity: 1;
+}
+
+.mission-image-gradient {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(to top, rgba(0, 0, 0, 0.8) 0%, transparent 50%);
+  pointer-events: none;
+}
+
+.mission-founded-tag {
+  position: absolute;
+  bottom: 2rem;
+  left: 2rem;
+  background: rgba(0, 0, 0, 0.6);
+  backdrop-filter: blur(10px);
+  padding: 1rem 1.5rem;
+  border-radius: 1rem;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+  opacity: 0; /* GSAP will fade this in */
+}
+
+.mission-founded-tag span {
+  font-size: 0.85rem;
+  color: var(--gray-400);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  font-weight: 600;
+}
+
+.mission-founded-tag strong {
+  font-size: 1.5rem;
+  font-family: var(--font-display);
+  color: var(--brand-lime, #D9FF00);
+  font-weight: 800;
+}
+
+/* ─────────────────────────────────────────────
+   3. HORIZONTAL SCROLL EXPERTISE
+───────────────────────────────────────────── */
+.expertise-section {
+  background: #080808;
+  border-top: 1px solid rgba(255, 255, 255, 0.03);
+  position: relative;
+  width: 100%;
+  /* Height is managed by GSAP pinning, but we can set a min-height */
+  overflow: hidden;
+}
+
+.expertise-pin-wrap {
+  height: 100vh;
+  display: flex;
+  align-items: center;
+  padding-left: 5vw;
+}
+
+.expertise-header {
+  min-width: 400px;
+  padding-right: 4rem;
+  flex-shrink: 0;
+}
+
+.expertise-subtitle {
+  color: var(--brand-lime, #D9FF00);
+  font-size: 0.9rem;
+  font-weight: 700;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  margin-bottom: 1rem;
+  display: block;
+}
+
+.expertise-title {
+  font-family: var(--font-display);
+  font-size: clamp(2.5rem, 4vw, 3.5rem);
+  font-weight: 800;
+  line-height: 1.1;
+  letter-spacing: -0.02em;
+}
+
+.expertise-scroll-container {
+  display: flex;
+  gap: 2rem;
+  padding-right: 15vw;
+}
+
+.expertise-card {
+  width: 400px;
+  height: 400px;
+  background: var(--card, #111);
+  border: 1px solid rgba(255, 255, 255, 0.04);
+  padding: 3rem;
+  border-radius: 1.5rem;
+  transition: all 0.3s ease;
+  display: flex;
+  flex-direction: column;
+  position: relative;
+  overflow: hidden;
+  flex-shrink: 0;
+}
+
+.expertise-card:hover {
+  border-color: rgba(217, 255, 0, 0.3);
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.5);
+  background: #141414;
+}
+
+.expertise-card::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 4px;
+  background: rgba(217, 255, 0, 0);
+  transition: background 0.3s ease;
+}
+
+.expertise-card:hover::before {
+  background: rgba(217, 255, 0, 1);
+}
+
+.expertise-icon {
+  width: 64px;
+  height: 64px;
+  border-radius: 16px;
+  background: rgba(217, 255, 0, 0.05); /* Slight tint */
+  border: 1px solid rgba(217, 255, 0, 0.15);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 2.5rem;
+  color: var(--brand-lime, #d9ff00);
+  transition: all 0.3s ease;
+}
+
+.expertise-card:hover .expertise-icon {
+  background: var(--brand-lime, #d9ff00);
+  color: var(--brand-dark, #000);
+  transform: scale(1.05);
+}
+
+.expertise-card-title {
+  font-family: var(--font-display);
+  font-size: 1.6rem;
+  font-weight: 700;
+  margin-bottom: 1rem;
+  color: var(--white);
+}
+
+.expertise-card-desc {
+  color: var(--gray-400);
+  font-size: 1.05rem;
+  line-height: 1.6;
+  flex-grow: 1;
+}
+
+/* Mobile fallback for Horizontal Scroll */
+@media (max-width: 1024px) {
+  .expertise-pin-wrap {
+    height: auto;
+    flex-direction: column;
+    padding: 6rem 1.5rem;
+    align-items: flex-start;
+  }
+  .expertise-header {
+    min-width: 100%;
+    padding-right: 0;
+    margin-bottom: 3rem;
+  }
+  .expertise-scroll-container {
+    flex-direction: column;
+    padding-right: 0;
+    width: 100%;
+  }
+  .expertise-card {
+    width: 100%;
+    height: auto;
+    min-height: 300px;
+  }
+}
+
+/* ─────────────────────────────────────────────
+   4. LEADERSHIP / TEAM
+───────────────────────────────────────────── */
+.about-team {
+  padding: 10rem 1.5rem;
+  background: var(--brand-dark);
+}
+
+.team-header-wrapper {
+  text-align: center;
+  margin-bottom: 4rem;
+}
+
+.team-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 2rem;
+}
+
+@media (min-width: 640px) {
+  .team-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (min-width: 1024px) {
+  .team-grid {
+    grid-template-columns: repeat(4, 1fr);
+  }
+}
+
+.team-member {
+  position: relative;
+  border-radius: 1.5rem;
+  overflow: hidden;
+  background: var(--card, #111);
+  aspect-ratio: 3/4;
+  opacity: 0; /* Faded out initially */
+  transform: translateY(50px);
+}
+
+.team-member img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  filter: grayscale(100%);
+  transition: all 0.7s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.team-member:hover img {
+  filter: grayscale(0%);
+  transform: scale(1.05);
+}
+
+.team-member-info {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  padding: 2.5rem 1.5rem 1.5rem;
+  background: linear-gradient(to top, rgba(0, 0, 0, 0.9) 0%, transparent 100%);
+  z-index: 10;
+  transform: translateY(20px);
+  opacity: 0.9;
+  transition: all 0.4s ease;
+}
+
+.team-member:hover .team-member-info {
+  transform: translateY(0);
+  opacity: 1;
+}
+
+.team-member-name {
+  font-family: var(--font-display);
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: var(--white);
+  margin-bottom: 0.25rem;
+}
+
+.team-member-role {
+  font-size: 0.85rem;
+  color: var(--brand-lime, #D9FF00);
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+/* ─────────────────────────────────────────────
+   5. MAGNETIC CTA
+───────────────────────────────────────────── */
+.about-cta-container {
+  padding: 6rem 1.5rem 10rem;
+  display: flex;
+  justify-content: center;
+}
+
+.about-cta-box {
+  background: var(--card, #111);
+  border: 1px solid rgba(255, 255, 255, 0.05);
+  border-radius: 2rem;
+  padding: 6rem 2rem;
+  text-align: center;
+  max-width: 1000px;
+  width: 100%;
+  position: relative;
+  overflow: hidden;
+}
+
+.about-cta-box::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 40%;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, var(--brand-lime), transparent);
+  box-shadow: 0 0 20px 2px var(--brand-lime);
+}
+
+.about-cta-heading {
+  font-family: var(--font-display);
+  font-size: clamp(2.5rem, 5vw, 4.5rem);
+  font-weight: 800;
+  margin-bottom: 1.5rem;
+  letter-spacing: -0.03em;
+}
+
+.about-cta-desc {
+  color: var(--gray-400);
+  font-size: 1.2rem;
+  max-width: 600px;
+  margin: 0 auto 3.5rem;
+  line-height: 1.6;
+}
+
+.magnetic-btn-wrap {
+  display: inline-block;
+  padding: 2rem; /* Add padding to capture mouse earlier */
+  margin: -2rem; /* Offset padding */
+}
+
+.btn-primary {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.75rem;
+  background: var(--brand-lime, #D9FF00);
+  color: var(--brand-dark, #000);
+  padding: 1.2rem 3rem;
+  border-radius: 9999px;
+  font-weight: 700;
+  font-size: 1.1rem;
+  border: none;
+  cursor: pointer;
+  text-decoration: none;
+  position: relative;
+  z-index: 10;
+  /* Important: Remove CSS transitions for magnetic hook to work smoothly */
+  box-shadow: 0 10px 40px rgba(217, 255, 0, 0.1);
+}
+
+.btn-primary svg {
+  transition: transform 0.3s ease;
+}
+
+.btn-primary:hover svg {
+  transform: translate(4px, -4px);
+}

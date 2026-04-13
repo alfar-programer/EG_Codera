@@ -1,25 +1,34 @@
-/* ─── FLOATING ROBOT ─── */
+/* ══════════════════════════════════════════════════════════
+   FLOATING ROBOT  –  widget · hero · chatting modes
+   Speech bubble lives in the DOM, NEVER inside canvas.
+══════════════════════════════════════════════════════════ */
+
+/* ─── Base wrapper ───────────────────────────────────────── */
 .floating-robot-wrap {
   position: fixed;
   z-index: 500;
   pointer-events: all;
+  /* speech bubble must escape → overflow must be visible everywhere */
+  overflow: visible !important;
 
-  /* Smooth transition between hero ↔ widget */
   transition:
     width        0.75s cubic-bezier(0.4, 0, 0.2, 1),
     height       0.75s cubic-bezier(0.4, 0, 0.2, 1),
     right        0.75s cubic-bezier(0.4, 0, 0.2, 1),
     bottom       0.75s cubic-bezier(0.4, 0, 0.2, 1),
     top          0.75s cubic-bezier(0.4, 0, 0.2, 1),
+    left         0.75s cubic-bezier(0.4, 0, 0.2, 1),
     border-radius 0.75s cubic-bezier(0.4, 0, 0.2, 1),
+    background   0.75s ease,
     box-shadow   0.4s ease,
     transform    0.3s ease;
 }
 
-/* ── Hero mode: large robot covers right half of viewport ── */
+/* ─── Hero mode ──────────────────────────────────────────── */
 .floating-robot-wrap.hero {
   right: 0;
-  top: 80px;       /* below navbar */
+  left: auto;
+  top: 80px;
   bottom: auto;
   width: 50vw;
   height: calc(100vh - 80px);
@@ -27,52 +36,237 @@
   background: transparent;
 }
 
-/* ── Widget mode: small floating circle at bottom-right ── */
+/* ─── Widget mode (small circle) ────────────────────────── */
 .floating-robot-wrap.widget {
   right: 24px;
+  left: auto;
   bottom: 90px;
   top: auto;
   width: 96px;
   height: 96px;
   border-radius: 50%;
-  background: rgba(8, 8, 18, 0.9);
+  background: rgba(8, 8, 18, 0.92);
   backdrop-filter: blur(16px);
   -webkit-backdrop-filter: blur(16px);
-  border: 2px solid rgba(217, 255, 0, 0.45);
+  border: 2px solid rgba(217, 255, 0, 0.5);
   box-shadow:
-    0 0 28px rgba(217, 255, 0, 0.18),
-    0 8px 32px rgba(0, 0, 0, 0.5);
-  /* overflow: hidden removed — was clipping chat messages */
-  overflow: visible;
+    0 0 28px rgba(217, 255, 0, 0.2),
+    0 8px 32px rgba(0, 0, 0, 0.55);
 }
 
 .floating-robot-wrap.widget:hover {
-  border-color: rgba(217, 255, 0, 0.85);
+  border-color: rgba(217, 255, 0, 0.9);
   box-shadow:
-    0 0 44px rgba(217, 255, 0, 0.38),
-    0 12px 40px rgba(0, 0, 0, 0.55);
+    0 0 44px rgba(217, 255, 0, 0.42),
+    0 12px 40px rgba(0, 0, 0, 0.6);
   transform: scale(1.1);
 }
 
 .floating-robot-wrap.widget:active {
   transform: scale(0.95);
-  box-shadow:
-    0 0 20px rgba(217, 255, 0, 0.5),
-    0 4px 16px rgba(0, 0, 0, 0.5);
 }
 
-/* ── Tooltip ── */
+/* ─── Chatting mode (full-screen overlay) ────────────────── */
+.floating-robot-wrap.chatting {
+  right: 0;
+  left: 0;
+  top: 0;
+  bottom: 0;
+  width: 100vw;
+  height: 100vh;
+  border-radius: 0;
+  background: rgba(0, 0, 0, 0.85);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  border: none;
+  box-shadow: none;
+  z-index: 9997;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+/* ─── Hidden state ───────────────────────────────────────── */
+.floating-robot-wrap.robot-hidden {
+  opacity: 0;
+  pointer-events: none;
+  transform: scale(0.6);
+  transition: opacity 0.4s ease, transform 0.4s ease;
+}
+
+/* ══════════════════════════════════════════════════════════
+   SPEECH BUBBLE  – OUTSIDE the canvas, positioned via CSS
+══════════════════════════════════════════════════════════ */
+
+/* In WIDGET mode: bubble floats to the LEFT of the circle */
+.floating-robot-wrap.widget .robot-speech-bubble {
+  position: absolute;
+  /* sit to the left, vertically centred */
+  right: calc(100% + 14px);
+  top: 50%;
+  transform: translateY(-50%) translateX(6px);
+  /* ↑ starts slightly right-shifted (invisible state) */
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.25s ease, transform 0.25s ease;
+  /* fixed comfortable width */
+  width: max-content;
+  max-width: 240px;
+  min-width: 160px;
+}
+
+.floating-robot-wrap.widget .robot-speech-bubble.visible {
+  opacity: 1;
+  transform: translateY(-50%) translateX(0);
+}
+
+/* Tail on the RIGHT side (points toward the circle) */
+.floating-robot-wrap.widget .robot-speech-tail {
+  position: absolute;
+  top: 50%;
+  right: -11px;
+  transform: translateY(-50%);
+  width: 0; height: 0;
+  border-top: 8px solid transparent;
+  border-bottom: 8px solid transparent;
+  border-left: 12px solid rgba(217, 255, 0, 0.6);
+  filter: drop-shadow(2px 0 4px rgba(217,255,0,0.3));
+}
+
+/* In HERO mode: bubble floats ABOVE the robot's head area */
+.floating-robot-wrap.hero .robot-speech-bubble {
+  position: absolute;
+  /* Robot renders at right half; head is roughly in the upper-centre of canvas.
+     Position bubble at top ~8% and horizontally centred – adjust if needed */
+  top: 8%;
+  left: 50%;
+  transform: translateX(-50%) translateY(8px);
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.3s ease, transform 0.3s ease;
+  width: max-content;
+  max-width: 300px;
+  min-width: 200px;
+}
+
+.floating-robot-wrap.hero .robot-speech-bubble.visible {
+  opacity: 1;
+  transform: translateX(-50%) translateY(0);
+}
+
+/* Tail pointing DOWN in hero mode */
+.floating-robot-wrap.hero .robot-speech-tail {
+  position: absolute;
+  bottom: -12px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 0; height: 0;
+  border-left: 8px solid transparent;
+  border-right: 8px solid transparent;
+  border-top: 12px solid rgba(217, 255, 0, 0.6);
+  filter: drop-shadow(0 2px 4px rgba(217,255,0,0.3));
+}
+
+/* In CHATTING mode: bubble floats ABOVE the robot's head */
+.floating-robot-wrap.chatting .robot-speech-bubble {
+  position: absolute;
+  top: 15%; /* Adjusted for mid-size centered robot */
+  left: 50%;
+  transform: translateX(-50%) translateY(8px);
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.3s ease, transform 0.3s ease;
+  width: max-content;
+  max-width: 300px;
+  min-width: 200px;
+}
+
+.floating-robot-wrap.chatting .robot-speech-bubble.visible {
+  opacity: 1;
+  transform: translateX(-50%) translateY(0);
+}
+
+.floating-robot-wrap.chatting .robot-speech-tail {
+  position: absolute;
+  bottom: -12px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 0; height: 0;
+  border-left: 8px solid transparent;
+  border-right: 8px solid transparent;
+  border-top: 12px solid rgba(217, 255, 0, 0.6);
+  filter: drop-shadow(0 2px 4px rgba(217,255,0,0.3));
+}
+
+/* Shared bubble appearance */
+.robot-speech-bubble {
+  background: linear-gradient(
+    135deg,
+    rgba(4, 10, 24, 0.96) 0%,
+    rgba(8, 22, 44, 0.94) 100%
+  );
+  backdrop-filter: blur(18px);
+  -webkit-backdrop-filter: blur(18px);
+  border: 1.5px solid rgba(217, 255, 0, 0.6);
+  border-radius: 16px;
+  padding: 11px 18px;
+  color: #e2faff;
+  font-size: 0.82rem;
+  font-weight: 600;
+  font-family: 'Inter', sans-serif;
+  line-height: 1.5;
+  letter-spacing: 0.025em;
+  text-align: center;
+  /* ensure text never overflows the bubble */
+  word-break: break-word;
+  overflow-wrap: break-word;
+  white-space: normal;
+  box-shadow:
+    0 0 24px rgba(217, 255, 0, 0.3),
+    0 0 56px rgba(217, 255, 0, 0.12),
+    inset 0 0 10px rgba(217, 255, 0, 0.06);
+  text-shadow: 0 0 8px rgba(217, 255, 0, 0.7);
+  animation: robotSpeechIn 0.35s cubic-bezier(0.34, 1.56, 0.64, 1) both;
+}
+
+.robot-speech-bubble span:first-child {
+  display: block;
+}
+
+/* ══════════════════════════════════════════════════════════
+   LOADING SKELETON  – shown while GLTF streams in
+══════════════════════════════════════════════════════════ */
+.robot-loader {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 2;
+  pointer-events: none;
+}
+
+.robot-loader-icon {
+  font-size: 2.2rem;
+  animation: robotLoaderPulse 1.2s ease-in-out infinite;
+  filter: drop-shadow(0 0 8px rgba(217,255,0,0.5));
+}
+
+/* ══════════════════════════════════════════════════════════
+   WIDGET HOVER TOOLTIP  (separate from speech bubble)
+══════════════════════════════════════════════════════════ */
 .robot-widget-tooltip {
   position: absolute;
-  right: calc(100% + 10px);
-  bottom: 50%;
-  transform: translateY(50%);
+  /* appear ABOVE the circle */
+  bottom: calc(100% + 10px);
+  left: 50%;
+  transform: translateX(-50%);
   background: rgba(8, 8, 18, 0.93);
   border: 1px solid rgba(217, 255, 0, 0.4);
   color: #e0faff;
-  font-size: 0.78rem;
+  font-size: 0.72rem;
   font-weight: 600;
-  padding: 5px 11px;
+  padding: 5px 12px;
   border-radius: 8px;
   white-space: nowrap;
   pointer-events: none;
@@ -86,20 +280,65 @@
   opacity: 1;
 }
 
-/* ── Mobile: always show as small widget ── */
+/* ══════════════════════════════════════════════════════════
+   MOBILE
+══════════════════════════════════════════════════════════ */
 @media (max-width: 767px) {
   .floating-robot-wrap.hero,
   .floating-robot-wrap.widget {
     right: 16px;
     bottom: 80px;
     top: auto;
+    left: auto;
     width: 80px;
     height: 80px;
     border-radius: 50%;
-    background: rgba(8, 8, 18, 0.9);
+    background: rgba(8, 8, 18, 0.92);
     backdrop-filter: blur(16px);
-    border: 2px solid rgba(217, 255, 0, 0.45);
-    box-shadow: 0 0 28px rgba(217, 255, 0, 0.18), 0 8px 32px rgba(0, 0, 0, 0.5);
-    overflow: visible; /* allow chat to show outside bounds */
+    border: 2px solid rgba(217, 255, 0, 0.5);
+    box-shadow: 0 0 28px rgba(217, 255, 0, 0.2), 0 8px 32px rgba(0, 0, 0, 0.55);
+    overflow: visible !important;
+  }
+
+  /* On mobile widget: bubble appears ABOVE the circle */
+  .floating-robot-wrap.widget .robot-speech-bubble,
+  .floating-robot-wrap.hero  .robot-speech-bubble,
+  .floating-robot-wrap.chatting .robot-speech-bubble {
+    bottom: calc(100% + 14px);
+    top: auto;
+    right: auto;
+    left: 50%;
+    transform: translateX(-50%) translateY(4px);
+    max-width: 200px;
+    min-width: 130px;
+  }
+
+  .floating-robot-wrap.widget .robot-speech-bubble.visible,
+  .floating-robot-wrap.hero  .robot-speech-bubble.visible,
+  .floating-robot-wrap.chatting .robot-speech-bubble.visible {
+    transform: translateX(-50%) translateY(0);
+  }
+
+  .floating-robot-wrap.widget .robot-speech-tail,
+  .floating-robot-wrap.hero  .robot-speech-tail,
+  .floating-robot-wrap.chatting .robot-speech-tail {
+    top: auto;
+    right: auto;
+    bottom: -11px;
+    left: 50%;
+    transform: translateX(-50%);
+    border-top: 11px solid rgba(217, 255, 0, 0.6);
+    border-left: 7px solid transparent;
+    border-right: 7px solid transparent;
+    border-bottom: none;
+  }
+
+  .floating-robot-wrap.chatting {
+    right: 0; left: 0;
+    bottom: 0; top: 0;
+    width: 100vw;
+    height: 100vh;
+    border-radius: 0;
+    background: rgba(0,0,0,0.9);
   }
 }

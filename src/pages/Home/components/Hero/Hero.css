@@ -50,7 +50,6 @@
   position: relative;
   z-index: 10;
   gap: 4rem;
-
 }
 
 /* ─── GLOW & PETAL ─── */
@@ -77,8 +76,6 @@
 }
 
 /* ─── PORTFOLIO CARD GRID ─── */
-/* Tailwind handles the column spans via md:col-span-* */
-/* These ensure consistent card appearance regardless of Tailwind scan */
 .card-img-grayscale img {
   filter: grayscale(100%);
   transition: filter 0.7s ease, transform 0.7s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.7s ease;
@@ -89,6 +86,50 @@
   opacity: 1;
 }
 
+/* ══════════════════════════════════════════════════
+   HERO TOP ROW  –  headline left · big robot right
+══════════════════════════════════════════════════ */
+.hero-top-row {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
+  gap: 2rem;
+  width: 100%;
+  flex-shrink: 0;
+}
+
+.hero-headline-col {
+  flex: 0 0 50%;
+  max-width: 50%;
+  min-width: 0;
+}
+
+/* Robot column: right side, responsive */
+.hero-robot-col {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  align-self: center;
+  flex-shrink: 0;
+  flex-grow: 0;
+  position: relative;
+  overflow: visible;
+  /* size: scales with viewport, capped */
+  width: clamp(200px, 22vw, 280px);
+}
+
+/* The 3D canvas box */
+.hero-robot-canvas {
+  width: 100%;
+  aspect-ratio: 1 / 1.05;
+  position: relative;
+  overflow: visible;
+  cursor: pointer;
+  z-index: 50;
+}
+
 .right-dev {
   display: flex;
   flex-direction: column;
@@ -97,7 +138,83 @@
   overflow: visible;
 }
 
-/* Right column — centers the badge vertically & horizontally */
+/* Small hint label below robot */
+.hero-robot-label {
+  font-size: 0.7rem;
+  font-weight: 500;
+  color: rgba(217, 255, 0, 0.5);
+  letter-spacing: 0.07em;
+  text-transform: uppercase;
+  margin-top: 0.4rem;
+  font-family: 'Inter', sans-serif;
+}
+
+/* ══════════════════════════════════════════════════
+   SPEECH BUBBLE  –  appears ABOVE the robot head
+══════════════════════════════════════════════════ */
+.hero-robot-bubble {
+  position: relative;
+  /* gap between bottom of bubble and top of canvas (via margin-bottom) */
+  margin-bottom: 14px;
+  background: linear-gradient(
+    135deg,
+    rgba(4, 10, 24, 0.97) 0%,
+    rgba(8, 22, 44, 0.95) 100%
+  );
+  backdrop-filter: blur(18px);
+  -webkit-backdrop-filter: blur(18px);
+  border: 1.5px solid rgba(217, 255, 0, 0.65);
+  border-radius: 16px;
+  padding: 12px 20px;
+  color: #e2faff;
+  font-size: 0.85rem;
+  font-weight: 600;
+  font-family: 'Inter', sans-serif;
+  line-height: 1.55;
+  letter-spacing: 0.025em;
+  text-align: center;
+  max-width: 280px;
+  min-width: 180px;
+  width: max-content;
+  word-break: break-word;
+  overflow-wrap: break-word;
+  white-space: normal;
+  box-shadow:
+    0 0 24px rgba(217, 255, 0, 0.3),
+    0 0 60px rgba(217, 255, 0, 0.12),
+    inset 0 0 10px rgba(217, 255, 0, 0.06);
+  text-shadow: 0 0 8px rgba(217, 255, 0, 0.65);
+  /* entry animation */
+  opacity: 0;
+  transform: translateY(6px);
+  transition: opacity 0.3s ease, transform 0.3s ease;
+  animation: heroBubbleIn 0.4s cubic-bezier(0.34, 1.56, 0.64, 1) 0.5s both;
+}
+
+.hero-robot-bubble--visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+@keyframes heroBubbleIn {
+  from { opacity: 0; transform: translateY(8px) scale(0.92); }
+  to   { opacity: 1; transform: translateY(0)   scale(1);    }
+}
+
+/* Downward tail pointing toward the robot head */
+.hero-robot-bubble__tail {
+  position: absolute;
+  bottom: -12px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 0; height: 0;
+  border-left: 8px solid transparent;
+  border-right: 8px solid transparent;
+  border-top: 12px solid rgba(217, 255, 0, 0.65);
+  filter: drop-shadow(0 2px 4px rgba(217, 255, 0, 0.3));
+}
+
+/* ── Legacy helpers kept for compatibility ── */
 .hero-badge-col {
   display: flex;
   align-items: center;
@@ -109,31 +226,46 @@
   z-index: 50;
 }
 
-
-.hero-description-col{margin-left: 24rem;
+.hero-description-col {
   margin-left: 24rem;
-    display: flex;
-    flex-direction: row;
-    align-items: center;
-    justify-content: center;
-    margin-bottom: 2rem;
-  }
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 2rem;
+}
 
-.hero-cta-btn{
+.hero-cta-btn {
   padding: 1rem;
   cursor: pointer;
   transition: all 0.5s ease;
 }
 
-.hero-cta-btn:hover{
+.hero-cta-btn:hover {
   background-color: var(--brand-dark);
   color: var(--brand-lime);
-
 }
 
-
+/* ── Mobile ── */
 @media (max-width: 768px) {
+  .hero-top-row {
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    gap: 1rem;
+  }
+
+  .hero-robot-col {
+    width: clamp(180px, 55vw, 240px);
+  }
+
   .hero-description-col {
     margin-left: 0;
+  }
+
+  .hero-robot-bubble {
+    font-size: 0.78rem;
+    padding: 10px 16px;
+    max-width: 220px;
   }
 }
